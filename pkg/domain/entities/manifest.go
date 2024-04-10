@@ -15,6 +15,7 @@ type ManifestCreateOptions struct {
 	SkipTLSVerify types.OptionalBool `json:"-" schema:"-"`
 	// Annotations to set on the list, which forces it to be OCI format
 	Annotations map[string]string `json:"annotations" schema:"annotations"`
+	Format string `schema:"format"`
 }
 
 // ManifestInspectOptions provides model for inspecting manifest

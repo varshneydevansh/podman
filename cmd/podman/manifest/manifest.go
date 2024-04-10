@@ -27,4 +27,6 @@ func init() {
 	registry.Commands = append(registry.Commands, registry.CliCommand{
 		Command: manifestCmd,
 	})
+	// Add the --format flag to the manifest create command
+	manifestCreateCommand.Flags().StringVar(&manifestCreateFormat, "format", "oci", "Manifest format (oci or v2s2)")
 }

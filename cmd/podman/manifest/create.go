@@ -19,6 +19,7 @@ type manifestCreateOptsWrapper struct {
 	entities.ManifestCreateOptions
 	annotations            []string // CLI only
 	tlsVerifyCLI, insecure bool     // CLI only
+	format 				   string // CLI only
 }
 
 var (
@@ -32,7 +33,8 @@ var (
 		Example: `podman manifest create mylist:v1.11
   podman manifest create mylist:v1.11 arch-specific-image-to-add
   podman manifest create mylist:v1.11 arch-specific-image-to-add another-arch-specific-image-to-add
-  podman manifest create --all mylist:v1.11 transport:tagged-image-to-add`,
+  podman manifest create --all mylist:v1.11 transport:tagged-image-to-add
+  podman manifest create --format v2s2 mylist:v1.11`,
 		Args: cobra.MinimumNArgs(1),
 	}
 )
@@ -50,6 +52,7 @@ func init() {
 	_ = createCmd.RegisterFlagCompletionFunc("annotation", completion.AutocompleteNone)
 	_ = flags.MarkHidden("insecure")
 	flags.BoolVar(&manifestCreateOpts.tlsVerifyCLI, "tls-verify", true, "require HTTPS and verify certificates when accessing the registry")
+	flags.StringVar(&manifestCreateOpts.format, "format", "oci", "manifest format (oci or v2s2)")
 }
 
 func create(cmd *cobra.Command, args []string) error {
@@ -77,6 +80,7 @@ func create(cmd *cobra.Command, args []string) error {
 		manifestCreateOpts.Annotations[k] = v
 	}
 
+	manifestCreateOpts.ManifestCreateOptions.Format = manifestCreateOpts.format
 	imageID, err := registry.ImageEngine().ManifestCreate(registry.Context(), args[0], args[1:], manifestCreateOpts.ManifestCreateOptions)
 	if err != nil {
 		return err
